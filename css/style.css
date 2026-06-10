@@ -1,0 +1,394 @@
+/* =========================================================
+   FroggaBio — Match the Cards
+   Mobile-first (320–430px). No frameworks, no CDNs.
+   ========================================================= */
+
+:root {
+  --green: #4a8f2f;
+  --green-light: #5db82e;
+  --bg-game: #9b9b8b;
+  --bg-dark: #2b2b2b;
+  --gold: #d4c93a;
+  --white: #ffffff;
+  --red: #e03131;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-dark);
+  color: #1c1c1c;
+}
+
+/* ---------- Screens & transitions ---------- */
+
+.screen {
+  min-height: 100dvh;
+  width: 100%;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.screen.fading { opacity: 0; }
+.hidden { display: none !important; }
+
+.screen-game  { background: var(--bg-game); }
+.screen-dark  { background: var(--bg-dark); color: var(--white); }
+.screen-light { background: #f7f7f2; }
+
+.wrap {
+  max-width: 430px;
+  min-width: 320px;
+  margin: 0 auto;
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom));
+}
+
+.center-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  min-height: 100dvh;
+  gap: 18px;
+}
+
+/* ---------- Header ---------- */
+
+.logo-bar {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.logo {
+  width: 200px;
+  max-width: 70%;
+  height: auto;
+}
+
+.divider {
+  border: none;
+  border-top: 2px solid rgba(0, 0, 0, 0.25);
+  margin: 4px 0 8px;
+}
+
+.screen-dark .divider {
+  border-top-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Timer ---------- */
+
+.timer {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1c1c1c;
+  text-align: left;
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer.warning {
+  color: var(--red);
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+/* ---------- Card board ---------- */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.card {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  perspective: 800px;
+  aspect-ratio: 16 / 10;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.4s;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  border-radius: 10px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.card-face img {
+  max-width: 72%;
+  max-height: 78%;
+  object-fit: contain;
+}
+
+.card-face-up {
+  transform: rotateY(180deg);
+}
+
+.card.matched .card-face {
+  box-shadow: 0 0 12px rgba(74, 143, 47, 0.8);
+}
+
+.card.matched {
+  cursor: default;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--green-light);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.btn:active {
+  background: var(--green);
+}
+
+.btn-half {
+  width: 60%;
+  margin: 0 auto 18px 0;
+}
+
+/* ---------- Contact footer ---------- */
+
+.contact-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--green-light);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.icon-btn:active {
+  background: var(--green);
+}
+
+.icon-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-at {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.powered {
+  text-align: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Win / lose screens ---------- */
+
+.gold-title {
+  color: var(--gold);
+  font-size: 2.4rem;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.prize-name {
+  color: var(--white);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.white-msg {
+  color: var(--white);
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+#lose-no-attempts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---------- Congratulations (claim) screen ---------- */
+
+.congrats-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 12px 0 4px;
+}
+
+.congrats-sub {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 18px;
+}
+
+.voucher-box {
+  border: 2px dashed #999;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.voucher-row {
+  display: flex;
+  gap: 8px;
+}
+
+.voucher-label {
+  flex: 0 0 95px;
+  font-weight: 700;
+}
+
+.valid-until {
+  color: #e8590c;
+  font-weight: 700;
+}
+
+/* ---------- "MATCH THE CARDS" banner ---------- */
+
+.match-banner {
+  background: #1f1f1f;
+  color: var(--green-light);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 18px 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 0 #0a3d00;
+  border: 3px solid var(--green);
+}
+
+/* ---------- Final voucher screen ---------- */
+
+.show-rep {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.value-box {
+  background: #1f1f1f;
+  border: 2px solid #444;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.value-label {
+  color: #aaa;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.value-prize {
+  color: var(--gold);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* ---------- Confetti ---------- */
+
+#confetti-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.confetti {
+  position: absolute;
+  top: -5vh;
+  width: 10px;
+  height: 16px;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(115vh) rotate(720deg);
+    opacity: 0.7;
+  }
+}
