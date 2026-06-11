@@ -7,6 +7,8 @@ const CONFIG = {
   timerSeconds: 45,          // total game time
   vipThresholdSeconds: 15,   // finish in ≤15s → VIP prize; otherwise → regular prize
   maxAttempts: 3,            // max total attempts per device/browser session
+  showCongratsScreen: false, // true → win flow includes the "Congratulations" claim
+                             // screen; false → "Proceed" goes straight to the voucher
   prizes: {
     vip: {
       name: "VIP Prize",                    // ← change before each event
@@ -328,7 +330,8 @@ function init() {
   applyContactLinks();
 
   els.btnRetry.addEventListener("click", newGame);
-  els.btnProceed.addEventListener("click", () => showScreen("screen-congrats"));
+  els.btnProceed.addEventListener("click", () =>
+    showScreen(CONFIG.showCongratsScreen ? "screen-congrats" : "screen-voucher"));
   els.btnClaim.addEventListener("click", () => showScreen("screen-voucher"));
   els.btnViewVoucher.addEventListener("click", () => showScreen("screen-voucher"));
 

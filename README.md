@@ -42,6 +42,7 @@ Everything that changes between events lives in the `CONFIG` object at the **top
 | `timerSeconds` | Total game time (default 45) |
 | `vipThresholdSeconds` | Finish in ≤ this many seconds → VIP prize; otherwise regular prize |
 | `maxAttempts` | Total attempts per device/browser (default 3) |
+| `showCongratsScreen` | `false` (default): after a win, "Proceed" goes straight to the voucher screen; set to `true` to bring back the intermediate "Congratulations" claim screen |
 | `prizes.vip.name` / `prizes.regular.name` | Prize names shown on the win, claim, and voucher screens |
 | `prizes.*.validUntil` | Voucher expiry text (free-form string) |
 | `prizes.*.terms` | Optional terms text shown in the voucher box |
