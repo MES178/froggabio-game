@@ -9,6 +9,12 @@ const CONFIG = {
   maxAttempts: 3,            // max total attempts per device/browser session
   showCongratsScreen: false, // true → win flow includes the "Congratulations" claim
                              // screen; false → "Proceed" goes straight to the voucher
+  promoBanner: {
+    enabled: true,           // true → clickable banner replaces every "Promotions"
+                             // button; false → regular green button (contact.promotions)
+    image: "images/sale_banner.png",
+    link: "https://www.froggabio.com/default/sale"
+  },
   prizes: {
     vip: {
       name: "VIP Prize",                    // ← change before each event
@@ -326,8 +332,17 @@ function applyContactLinks() {
   });
 }
 
+function applyPromoBanner() {
+  document.querySelectorAll(".js-promo").forEach(link => {
+    link.href = CONFIG.promoBanner.link;
+    link.classList.add("promo-banner");
+    link.innerHTML = `<img src="${CONFIG.promoBanner.image}" alt="Promotions">`;
+  });
+}
+
 function init() {
   applyContactLinks();
+  if (CONFIG.promoBanner.enabled) applyPromoBanner();
 
   els.btnRetry.addEventListener("click", newGame);
   els.btnProceed.addEventListener("click", () =>
