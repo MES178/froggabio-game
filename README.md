@@ -43,6 +43,7 @@ Everything that changes between events lives in the `CONFIG` object at the **top
 | `vipThresholdSeconds` | Finish in ≤ this many seconds → VIP prize; otherwise regular prize |
 | `maxAttempts` | Total attempts per device/browser (default 3) |
 | `showCongratsScreen` | `false` (default): after a win, "Proceed" goes straight to the voucher screen; set to `true` to bring back the intermediate "Congratulations" claim screen |
+| `promoBanner` | `enabled: true` → a clickable banner image (`promoBanner.image`, links to `promoBanner.link`) replaces every Promotions button; `enabled: false` → regular green Promotions button |
 | `prizes.vip.name` / `prizes.regular.name` | Prize names shown on the win, claim, and voucher screens |
 | `prizes.*.validUntil` | Voucher expiry text (free-form string) |
 | `prizes.*.terms` | Optional terms text shown in the voucher box |
