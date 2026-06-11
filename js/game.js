@@ -43,7 +43,7 @@ const CONFETTI_COLORS = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff922b', 
 const state = {
   started: false,     // timer running (starts on first card tap)
   over: false,        // current round finished (win or timeout)
-  boardLocked: false, // taps ignored while a mismatch is being resolved
+  pendingUnflip: null,// { cards: [a, b], timeoutId } — mismatched pair waiting to flip back
   flippedCards: [],   // currently face-up, unmatched cards (max 2)
   matchedPairs: 0,
   deadline: 0,        // ms timestamp when time runs out
@@ -154,7 +154,8 @@ function renderBoard() {
 function newGame() {
   state.started = false;
   state.over = false;
-  state.boardLocked = false;
+  if (state.pendingUnflip) clearTimeout(state.pendingUnflip.timeoutId);
+  state.pendingUnflip = null;
   state.flippedCards = [];
   state.matchedPairs = 0;
   clearInterval(state.timerId);
@@ -187,9 +188,16 @@ function startTimer() {
 /* ---------- Card flipping & matching ---------- */
 
 function onCardTap(card) {
-  if (state.over || state.boardLocked) return;
+  if (state.over) return;
   if (card.classList.contains("flipped") || card.classList.contains("matched")) return;
-  if (state.flippedCards.length >= 2) return;
+
+  // A mismatched pair still showing? Flip it back right away so this
+  // tap is never ignored — fast players don't lose taps to the pause.
+  if (state.pendingUnflip) {
+    clearTimeout(state.pendingUnflip.timeoutId);
+    state.pendingUnflip.cards.forEach(c => c.classList.remove("flipped"));
+    state.pendingUnflip = null;
+  }
 
   if (!state.started) startTimer();
 
@@ -197,30 +205,22 @@ function onCardTap(card) {
   state.flippedCards.push(card);
 
   if (state.flippedCards.length === 2) {
-    state.boardLocked = true;
-    // Let the flip animation finish before resolving the pair
-    setTimeout(checkMatch, FLIP_MS + 50);
-  }
-}
-
-function checkMatch() {
-  const [a, b] = state.flippedCards;
-  if (state.over) return; // timer ran out mid-check
-
-  if (a.dataset.id === b.dataset.id) {
-    a.classList.add("matched");
-    b.classList.add("matched");
+    const [a, b] = state.flippedCards;
     state.flippedCards = [];
-    state.boardLocked = false;
-    state.matchedPairs++;
-    if (state.matchedPairs === PAIRS) onWin();
-  } else {
-    setTimeout(() => {
-      a.classList.remove("flipped");
-      b.classList.remove("flipped");
-      state.flippedCards = [];
-      state.boardLocked = false;
-    }, MISMATCH_PAUSE_MS);
+
+    if (a.dataset.id === b.dataset.id) {
+      a.classList.add("matched");
+      b.classList.add("matched");
+      state.matchedPairs++;
+      if (state.matchedPairs === PAIRS) onWin();
+    } else {
+      const timeoutId = setTimeout(() => {
+        a.classList.remove("flipped");
+        b.classList.remove("flipped");
+        state.pendingUnflip = null;
+      }, FLIP_MS + MISMATCH_PAUSE_MS);
+      state.pendingUnflip = { cards: [a, b], timeoutId };
+    }
   }
 }
 
